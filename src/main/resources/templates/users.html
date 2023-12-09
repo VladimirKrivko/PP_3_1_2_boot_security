@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Users</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container-lg">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2>Users <b>Details</b></h2></div>
+                    <div class="col-sm-4">
+                        <form action="#" th:action="@{/logout}" >
+                            <button type="submit" class="btn btn-danger add-new"><i class="fa fa-plus"></i> Logout
+                            </button>
+                        </form>
+                        <form action="#" th:method="get" th:action="@{/admin/user-create}">
+                            <button type="submit" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Password</th>
+                    <th>Roles</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user: ${users_page.content}">
+                    <td> <div class="mb-3" th:text="${user.id}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.firstName}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.lastName}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.password}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.roles}"/></td>
+                    <td>
+                        <div class="btn-group table" role="group" aria-label="Basic mixed styles example">
+                            <form id="update_form_id" action="#" th:method="GET" th:action="@{/admin/user-update}"
+                                  th:object="${user}">
+                                <input type="hidden" th:name="id" th:value="${user.id}"/>
+                                <button type="submit" class="btn btn-warning btn-sm">Upd</button>
+                            </form>
+                            <form action="#" th:method="POST" th:action="@{/admin/user-delete}" th:object="${user}">
+                                <input type="hidden" th:name="id" th:value="${user.id}"/>
+                                <button type="submit" class="btn btn-danger btn-sm">Del</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <nav aria-label="Page navigation">
+                <select style="float: right; margin-left: 5px" id="limit" class="form-control-sm"
+                        th:name="${users_page.size}"
+                        th:onchange="'window.location.href = \'' + @{/admin/users} + '?page=1&size=\' + this.value'">
+                    <option th:value="1" th:selected="${1==users_page.size}">1</option>
+                    <option th:value="2" th:selected="${2==users_page.size}">2</option>
+                    <option th:value="3" th:selected="${3==users_page.size}">3</option>
+                    <option th:value="4" th:selected="${4==users_page.size}">4</option>
+                    <option th:value="5" th:selected="${5==users_page.size}">5</option>
+                    <option th:value="${users_page.totalElements}" th:selected="${users_page.totalElements==users_page.size}">All</option>
+                </select>
+                <label style="float: right; margin-right: 10px" for="limit">Users per page: </label>
+                <br>
+
+                <ul class="pagination justify-content-end" style="margin-top: 10px">
+                    <li class="page-item disabled" th:if="${users_page.number > 2}">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    <li class="page-item" th:classappend="${page_number == users_page.number + 1} ? 'active'"
+                        th:if="${users_page.totalPages > 1}" th:each="page_number : ${page_numbers}">
+                        <a class="page-link" th:href="@{/admin/users(page=${page_number}, size=${users_page.size})}"
+                           th:if="${page_number > users_page.number - 2 && page_number < users_page.number + 4}" th:text="${page_number}"/>
+                    </li>
+                    <li class="page-item disabled" th:if="${users_page.number < users_page.totalPages - 3}">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                </ul>
+                <ul class="pagination justify-content-center" style="margin-top: 10px" th:classappend="${users_page.first && users_page.last} ? 'visibility-hidden'">
+                    <li class="page-item" th:classappend="${users_page.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/users(page=${users_page.number}, size=${users_page.size})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:classappend="${users_page.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/users(page=${users_page.number + 2}, size=${users_page.size})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>
