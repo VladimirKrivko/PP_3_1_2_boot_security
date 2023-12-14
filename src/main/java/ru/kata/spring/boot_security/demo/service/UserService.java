@@ -12,6 +12,7 @@ public interface UserService {
     UserDto findByFirstName(String firstName);
 
     void saveUser(UserDto user);
+    void updateUser(UserDto user);
 
     void deleteById(Long id);
 }

@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Exclude
     private Long id;
-    @Column(name = "first_name", length = 32, nullable = false)
+    @Column(name = "first_name", length = 32, nullable = false, unique = true)
     private String firstName;
     @Column(name = "last_name", length = 32)
     private String lastName;

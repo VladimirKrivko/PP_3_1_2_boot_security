@@ -2,31 +2,23 @@ package ru.kata.spring.boot_security.demo.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 @Service
 @AllArgsConstructor
-@Transactional
-public class UserServiceImpl implements UserDetailsService, UserService {
-
+public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,41 +28,37 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String firstName) throws UsernameNotFoundException {
-        UserDto user = findByFirstName(firstName);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", firstName));
-        }
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getFirstName(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRoles())
-        );
-    }
-
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
     public Page<UserDto> fetchUsers(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAll(pageable).
                 map(user -> modelMapper.map(user, UserDto.class));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public UserDto findById(Long id) {
         return modelMapper.map(userRepository.getById(id), UserDto.class);
     }
 
+    @Override
+    @Transactional
     public void saveUser(UserDto user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(modelMapper.map(user, User.class));
     }
 
+    @Override
+    @Transactional
+    public void updateUser(UserDto user) {
+        UserDto byId = findById(user.getId());
+        if (!byId.getPassword().equals(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(modelMapper.map(user, User.class));
+    }
+
+    @Override
+    @Transactional
     public void deleteById(Long id) {
         userRepository.findById(id)
                 .ifPresent(userRepository::delete);

@@ -51,8 +51,8 @@
                     <td>
                         <div class="md-3">
                             <select class="select form-control" th:field="*{roles}" multiple data-mdb-clear-button="true">
-                                <option th:value="1">USER</option>
-                                <option th:value="2">ADMIN</option>
+                                <option th:value="1">ADMIN</option>
+                                <option th:value="2">USER</option>
                             </select>
                             <div style="color: red" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"/>
                         </div>
