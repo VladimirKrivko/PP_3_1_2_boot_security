@@ -8,52 +8,52 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
-    public UserDto findByFirstName(String firstName) {
-        return modelMapper.map(userRepository.findByFirstName(firstName), UserDto.class);
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("user with email {%s} not found", email)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserDto> fetchUsers(Integer page, Integer size) {
+    public Page<User> fetchUsers(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable).
-                map(user -> modelMapper.map(user, UserDto.class));
+        return userRepository.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserDto findById(Long id) {
-        return modelMapper.map(userRepository.getById(id), UserDto.class);
+    public User findById(Long id) {
+        return userRepository.getById(id);
     }
 
     @Override
     @Transactional
-    public void saveUser(UserDto user) {
+    public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(modelMapper.map(user, User.class));
+        userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void updateUser(UserDto user) {
-        UserDto byId = findById(user.getId());
+    public void updateUser(User user) {
+        User byId = findById(user.getId());
         if (!byId.getPassword().equals(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        userRepository.save(modelMapper.map(user, User.class));
+        userRepository.save(user);
     }
 
     @Override

@@ -22,11 +22,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String firstName) throws UsernameNotFoundException {
-        User user = userRepository.findByFirstName(firstName);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", firstName));
-        }
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with {%s} not found", email)));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getFirstName(),

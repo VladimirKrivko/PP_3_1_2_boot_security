@@ -1,18 +1,18 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.data.domain.Page;
-import ru.kata.spring.boot_security.demo.dto.UserDto;
+import ru.kata.spring.boot_security.demo.model.User;
 
 public interface UserService {
 
-    Page<UserDto> fetchUsers(Integer page, Integer size);
+    Page<User> fetchUsers(Integer page, Integer size);
 
-    UserDto findById(Long id);
+    User findById(Long id);
 
-    UserDto findByFirstName(String firstName);
+    User findUserByEmail(String email);
 
-    void saveUser(UserDto user);
-    void updateUser(UserDto user);
+    void saveUser(User user);
+    void updateUser(User user);
 
     void deleteById(Long id);
 }

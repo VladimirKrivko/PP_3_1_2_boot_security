@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@Table(name = "role", schema = "spring_security")
+@Table(name = "role", schema = "spring_security_bootstrap")
 public class Role implements GrantedAuthority {
 
     @Id

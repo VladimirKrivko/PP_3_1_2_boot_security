@@ -34,7 +34,9 @@
                     <th>Id</th>
                     <th>First name</th>
                     <th>Last name</th>
+                    <th>Age</th>
                     <th>Password</th>
+                    <th>Email</th>
                     <th>Roles</th>
                     <th>Actions</th>
                 </tr>
@@ -44,7 +46,9 @@
                     <td> <div class="mb-3" th:text="${user.id}"/></td>
                     <td> <div class="mb-3" style="overflow: hidden" th:text="${user.firstName}"/></td>
                     <td> <div class="mb-3" style="overflow: hidden" th:text="${user.lastName}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.age}"/></td>
                     <td> <div class="mb-3" style="overflow: hidden" th:text="${user.password}"/></td>
+                    <td> <div class="mb-3" style="overflow: hidden" th:text="${user.email}"/></td>
                     <td> <div class="mb-3" style="overflow: hidden" th:text="${user.roles}"/></td>
                     <td>
                         <div class="btn-group table" role="group" aria-label="Basic mixed styles example">

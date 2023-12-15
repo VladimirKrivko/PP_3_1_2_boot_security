@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.dto.UserDto;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
@@ -32,7 +32,7 @@ public class AdminController {
                           Model model) {
         log.info("handling users request: {} {}", page, size);
 
-        Page<UserDto> usersPage = userService.fetchUsers(page - 1, size);
+        Page<User> usersPage = userService.fetchUsers(page - 1, size);
         model.addAttribute("users_page", usersPage);
 
         int totalPages = usersPage.getTotalPages();
@@ -47,12 +47,12 @@ public class AdminController {
 
     @GetMapping("/user-create")
     public String createUserForm(Model model) {
-        model.addAttribute("user", new UserDto());
+        model.addAttribute("user", new User());
         return "user-create";
     }
 
     @PostMapping("/user-create")
-    public String createUser(@ModelAttribute("user") @Valid UserDto user,
+    public String createUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult) {
         log.info("handling create user request: {}", user);
         if (bindingResult.hasErrors()) {
@@ -70,7 +70,7 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(@ModelAttribute("user") @Valid UserDto user,
+    public String updateUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult) {
         log.info("handling update user request: {}", user);
         if (bindingResult.hasErrors()) {

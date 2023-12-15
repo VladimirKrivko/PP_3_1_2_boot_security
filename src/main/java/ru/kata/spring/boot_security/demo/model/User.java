@@ -19,7 +19,7 @@ import java.util.Collection;
 
 @Entity
 @Data
-@Table(name = "user", schema = "spring_security")
+@Table(name = "user", schema = "spring_security_bootstrap")
 public class User implements UserDetails {
 
     @Id
@@ -30,8 +30,12 @@ public class User implements UserDetails {
     private String firstName;
     @Column(name = "last_name", length = 32)
     private String lastName;
+    @Column(name = "age")
+    private Integer age;
     @Column(name = "password", length = 80, nullable = false)
     private String password;
+    @Column(name = "email", unique = true)
+    private String email;
     @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
