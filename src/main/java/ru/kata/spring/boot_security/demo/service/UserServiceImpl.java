@@ -9,14 +9,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -43,6 +46,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(user.getRoles()
+                .stream()
+                .map(role -> roleRepository.getById(role.getId()))
+                .collect(Collectors.toSet()));
         userRepository.save(user);
     }
 
@@ -53,6 +60,7 @@ public class UserServiceImpl implements UserService {
         if (!byId.getPassword().equals(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+
         userRepository.save(user);
     }
 

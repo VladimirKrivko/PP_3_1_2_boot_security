@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @EnableJpaRepositories
 public interface UserRepository extends JpaRepository<User, Long> {
+
     @Query("from User u join fetch u.roles where u.email = :email")
     Optional<User> findUserByEmail(@Param("email") String email);
 }

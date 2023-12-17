@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @ToString.Exclude
     private Long id;
 
     @Column(name = "name", unique = true)

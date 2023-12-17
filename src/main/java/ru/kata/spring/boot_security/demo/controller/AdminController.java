@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
@@ -26,11 +28,16 @@ import java.util.stream.IntStream;
 public class AdminController {
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping
     public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
                           @RequestParam(required = false, defaultValue = "5") Integer size,
                           Model model) {
         log.info("handling users request: {} {}", page, size);
+
+        model.addAttribute("user", userService.findUserByEmail(
+                SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName()));
 
         Page<User> usersPage = userService.fetchUsers(page - 1, size);
         model.addAttribute("users_page", usersPage);
@@ -42,48 +49,36 @@ public class AdminController {
                     .collect(Collectors.toList());
             model.addAttribute("page_numbers", pageNumbers);
         }
-        return "users";
+        return "admin";
     }
 
-    @GetMapping("/user-create")
-    public String createUserForm(Model model) {
-        model.addAttribute("user", new User());
-        return "user-create";
-    }
-
-    @PostMapping("/user-create")
+    @PostMapping
     public String createUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult) {
         log.info("handling create user request: {}", user);
         if (bindingResult.hasErrors()) {
-            return "user-create";
+            return "admin";
         }
         userService.saveUser(user);
-        return "redirect:/admin/users";
+
+        return "redirect:/admin";
     }
 
-    @GetMapping("/user-update")
-    public String updateUserForm(@RequestParam(name = "id") Long id,
-                                 Model model) {
-        model.addAttribute("user", userService.findById(id));
-        return "user-update";
-    }
-
-    @PostMapping("/user-update")
+    @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult) {
         log.info("handling update user request: {}", user);
-        if (bindingResult.hasErrors()) {
-            return "user-update";
-        }
+//        if (bindingResult.hasErrors()) {
+//            return "users";
+//        }
         userService.updateUser(user);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
-    @PostMapping("/user-delete")
-    public String deleteUser(@RequestParam(name = "id") Long id) {
-        log.info("handling delete user by id request: id = {}", id);
-        userService.deleteById(id);
-        return "redirect:/admin/users";
+    @PostMapping("/delete")
+    public String deleteUser(@ModelAttribute("user") User user) {
+        log.info("handling delete user request: {}", user);
+        userService.deleteById(user.getId());
+        return "redirect:/admin";
     }
 }

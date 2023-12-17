@@ -104,3 +104,20 @@ table.table td .add {
 .visibility-hidden {
     visibility: hidden;
 }
+
+.my-container {
+    margin-left: 0px;
+    margin-top: 10px;
+    border-width: 1px;
+}
+
+.mine-container {
+    margin-left: -5px;
+    margin-top: 10px;
+    border-width: 1px;
+}
+
+.table {
+    flex: 1;
+    overflow-y: auto;
+}
