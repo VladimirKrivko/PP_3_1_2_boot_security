@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
@@ -39,7 +38,7 @@ public class AdminController {
                         .getAuthentication()
                         .getName()));
 
-        Page<User> usersPage = userService.fetchUsers(page - 1, size);
+        Page<UserDto> usersPage = userService.fetchUsers(page - 1, size);
         model.addAttribute("users_page", usersPage);
 
         int totalPages = usersPage.getTotalPages();
@@ -53,7 +52,7 @@ public class AdminController {
     }
 
     @PostMapping
-    public String createUser(@ModelAttribute("user") @Valid User user,
+    public String createUser(@ModelAttribute("user") @Valid UserDto user,
                              BindingResult bindingResult) {
         log.info("handling create user request: {}", user);
         if (bindingResult.hasErrors()) {
@@ -65,9 +64,11 @@ public class AdminController {
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") @Valid User user,
+    public String updateUser(@ModelAttribute("user") @Valid UserDto user,
                              BindingResult bindingResult) {
         log.info("handling update user request: {}", user);
+
+
 //        if (bindingResult.hasErrors()) {
 //            return "users";
 //        }
@@ -76,7 +77,7 @@ public class AdminController {
     }
 
     @PostMapping("/delete")
-    public String deleteUser(@ModelAttribute("user") User user) {
+    public String deleteUser(@ModelAttribute("user") UserDto user) {
         log.info("handling delete user request: {}", user);
         userService.deleteById(user.getId());
         return "redirect:/admin";

@@ -34,7 +34,7 @@
             <a class="nav-link active" id="v-pills-admin-tab" data-bs-toggle="pill" href="#v-pills-admin" role="tab"
                aria-controls="v-pills-admin" aria-selected="true">Admin</a>
             <a class="nav-link" id="v-pills-user-tab" data-bs-toggle="pill" href="#v-pills-user" role="tab"
-               th:classappend="${user.roles.stream().count() == 1} ? 'visibility-hidden'"
+               th:classappend="${!user.roles.contains('USER')} ? 'visibility-hidden'"
                aria-controls="v-pills-user" aria-selected="false">User</a>
         </div>
     </div>
@@ -162,9 +162,9 @@
                                                                 <select class="form-control form-control-sm"
                                                                         id="rolesUpdate" name="roles" multiple data-mdb-clear-button="false"
                                                                         style="height: 50px; width: 300px; margin: 0 auto">
-                                                                    <option selected th:value="${(#strings.replace(user.roles, 'ROLE_', '').replaceAll('[\[,\]]', '').replaceAll('ADMIN', 1).replaceAll('USER', 2))}" hidden="hidden"></option>
-                                                                    <option value="1">ADMIN</option>
-                                                                    <option value="2">USER</option>
+                                                                    <option selected th:value="${user.roles.replaceAll('[\[ \]]', '')}" hidden="hidden"></option>
+                                                                    <option value="ROLE_ADMIN">ADMIN</option>
+                                                                    <option value="ROLE_USER">USER</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -239,7 +239,7 @@
                                                                 <label for="roleDelete"
                                                                        class="col-form-label">Role</label>
                                                                 <input type="role"
-                                                                       th:value="${(#strings.replace(user.roles, 'ROLE_', '').replaceAll('[\[,\]]', '').replaceAll('ADMIN', 1).replaceAll('USER', 2))}"
+                                                                       th:value="${user.roles.replaceAll('[\[ ,\]]', '').replace('ROLE_', '')}"
                                                                        name="roles"
                                                                        class="form-control" id="roleDelete"
                                                                        readonly/>
@@ -344,8 +344,8 @@
                                     <select class="form-control form-control-sm"
                                             name="roles" multiple
                                             style="height: 50px; width: 300px; margin: 0 auto">
-                                            <option value="1">ADMIN</option>
-                                            <option selected="selected" value="2">USER</option>
+                                            <option value="ROLE_ADMIN">ADMIN</option>
+                                            <option selected="selected" value="ROLE_USER">USER</option>
                                     </select>
                                     <br/>
                                     <div>
