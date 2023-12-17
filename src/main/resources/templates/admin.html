@@ -118,44 +118,42 @@
                                                                 <label for="nameUpdate" class="col-form-label">ID</label>
                                                                 <input type="text"
                                                                        th:value="${user.getId()}" name="id" readonly
-                                                                       class="form-control" id="idUpdate"
-                                                                       required minlength="2" maxlength="20"/>
+                                                                       class="form-control" id="idUpdate"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="nameUpdate" class="col-form-label">First name</label>
                                                                 <input type="text"
                                                                        th:value="${user.getFirstName()}" name="firstName"
                                                                        class="form-control" id="nameUpdate"
-                                                                       required minlength="2" maxlength="20"/>
-                                                                <div style="color: red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"/>
+                                                                       required minlength="2" maxlength="32"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="lastNameUpdate" class="col-form-label">Last name</label>
                                                                 <input type="text"
                                                                        th:value="${user.getLastName}" name="lastName"
                                                                        class="form-control" id="lastNameUpdate"
-                                                                       required minlength="2" maxlength="20"/>
+                                                                       maxlength="32"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="ageUpdate" class="col-form-label">Age</label>
-                                                                <input type="text"
+                                                                <input type="number"
                                                                        th:value="${user.getAge()}" name="age"
                                                                        class="form-control" id="ageUpdate"
-                                                                       required minlength="2" maxlength="20"/>
+                                                                       required min="16" max="200"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="emailUpdate" class="col-form-label">Email</label>
-                                                                <input type="text"
+                                                                <input type="email"
                                                                        th:value="${user.getEmail()}" name="email"
                                                                        class="form-control" id="emailUpdate"
-                                                                       required minlength="2" maxlength="20"/>
+                                                                       required minlength="8" maxlength="255"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="passwordUpdate" class="col-form-label">Password</label>
                                                                 <input type="password" th:value="${user.getPassword()}"
                                                                        name="password"
                                                                        class="form-control" id="passwordUpdate"
-                                                                       required minlength="2" maxlength="20"/>
+                                                                       required minlength="4" maxlength="80"/>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="container-fluid " for="rolesUpdate">Role</label>
@@ -307,35 +305,35 @@
                                 <form th:method="POST" th:action="@{/admin}" th:object="${user}">
                                     <label class="font-weight-bold" for="firstNameNew">First name</label>
                                     <br>
-                                    <input class="form-control" type="text" required minlength="2" maxlength="15"
+                                    <input class="form-control" type="text" required minlength="2" maxlength="32"
                                            name="firstName"
                                            id="firstNameNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"/>
                                     <br>
                                     <label class="font-weight-bold" for="lastNameNew">Last name</label>
                                     <br>
-                                    <input class="form-control" type="text" required minlength="2" maxlength="15"
+                                    <input class="form-control" type="text" maxlength="32"
                                            name="lastName"
                                            id="lastNameNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"/>
                                     <br>
                                     <label class="font-weight-bold" for="ageNew">Age</label>
                                     <br>
-                                    <input class="form-control" type="text" step="1" min="0" required minlength="1"
-                                           maxlength="120" name="age"
+                                    <input class="form-control" type="number" required step="1" min="16" max="200"
+                                           name="age"
                                            id="ageNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"/>
                                     <br>
                                     <label class="font-weight-bold" for="emailNew">Email</label>
                                     <br>
-                                    <input class="form-control" type="text" step="1" min="0" required minlength="1"
-                                           maxlength="120" name="email"
+                                    <input class="form-control" type="email" required minlength="8" maxlength="255"
+                                           name="email"
                                            id="emailNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"/>
                                     <br>
                                     <label class="font-weight-bold" for="passwordNew">Password</label>
                                     <br>
-                                    <input class="form-control" type="text" required minlength="3" maxlength="15"
+                                    <input class="form-control" type="password" required minlength="4" maxlength="80"
                                            name="password"
                                            id="passwordNew"
                                            style="height: 30px; width: 300px; margin: 0 auto"/>

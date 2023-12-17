@@ -1,18 +1,14 @@
 package ru.kata.spring.boot_security.demo.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import ru.kata.spring.boot_security.demo.model.Role;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 @Data
 public class UserDto {
@@ -41,8 +37,5 @@ public class UserDto {
     @Email
     private String email;
 
-    @NotNull
-    @NotEmpty
-//    private Set<Role> roles;
     private String roles;
 }

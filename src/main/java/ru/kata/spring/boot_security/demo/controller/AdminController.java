@@ -32,7 +32,6 @@ public class AdminController {
                           @RequestParam(required = false, defaultValue = "5") Integer size,
                           Model model) {
         log.info("handling users request: {} {}", page, size);
-
         model.addAttribute("user", userService.findUserByEmail(
                 SecurityContextHolder.getContext()
                         .getAuthentication()
@@ -55,11 +54,7 @@ public class AdminController {
     public String createUser(@ModelAttribute("user") @Valid UserDto user,
                              BindingResult bindingResult) {
         log.info("handling create user request: {}", user);
-        if (bindingResult.hasErrors()) {
-            return "admin";
-        }
         userService.saveUser(user);
-
         return "redirect:/admin";
     }
 
@@ -67,11 +62,6 @@ public class AdminController {
     public String updateUser(@ModelAttribute("user") @Valid UserDto user,
                              BindingResult bindingResult) {
         log.info("handling update user request: {}", user);
-
-
-//        if (bindingResult.hasErrors()) {
-//            return "users";
-//        }
         userService.updateUser(user);
         return "redirect:/admin";
     }

@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveUser(UserDto user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         User toUser = mapper.convertToUser(user);
         //TODO: to remove
         toUser.setRoles(convertStringToSetRoles(user.getRoles()));
@@ -72,12 +71,8 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         User toUser = mapper.convertToUser(user);
-
         //TODO: to remove
-        System.out.println("toUser.roles()= " + toUser.getRoles());
-        System.out.println("userDto.roles()= " + user.getRoles());
         toUser.setRoles(convertStringToSetRoles(user.getRoles()));
-        System.out.println("toUser.roles()= " + toUser.getRoles());
 
         userRepository.save(toUser);
     }
