@@ -98,7 +98,7 @@
                                         <!--UPDATE EDIT-->
                                         <button class="btn btn-info" data-bs-toggle="modal"
                                                 style="color: whitesmoke"
-                                                th:data-bs-target="${'#eMdl'+ user.getId}"
+                                                th:data-bs-target="${'#eMdl'+ user.getId()}"
                                                 th:data-row="${user}">Edit
                                         </button>
                                         <div class="modal fade" th:id="${'eMdl'+ user.getId()}" tabindex="-1"
