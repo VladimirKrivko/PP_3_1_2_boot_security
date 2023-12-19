@@ -10,3 +10,4 @@ target/
 out
 .mvn
 mvnw*
+/**/application.yaml
