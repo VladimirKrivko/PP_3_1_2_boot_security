@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta id="root" name="viewport" content="width=device-width, initial-scale=1" about="@{/users.html}">
+    <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>User</title>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
 
@@ -23,62 +24,78 @@
         <a th:href="@{/logout}" style="color: #6c757d; text-decoration: none">Logout</a>
     </nav>
 </nav>
-<br>
 
-<div class="container-fluid">
-    <div class="row">
-
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="position-sticky pt-3">
-                <ul class="nav nav-pills flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active " href="/user">
-                            User
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">User information-page </h1>
-            </div>
-            <div>
-                <h4>About user</h4>
-                <br>
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First name</th>
-                            <th>Last name</th>
-                            <th>Age</th>
-                            <th>Email</th>
-                            <th>Roles</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><p th:text="${user.getId()}"/></td>
-                            <td><p th:text="${user.getFirstName()}"/></td>
-                            <td><p th:text="${user.getLastName()}"/></td>
-                            <td><p th:text="${user.getAge()}"/></td>
-                            <td><p th:text="${user.getEmail()}"/></td>
-                            <td>
-                                <label th:text="${(#strings.replace(user.roles, 'ROLE_', '').replaceAll('[\[,\]]', ''))}"/>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+<div class="row" style="--bs-gutter-x: .0rem; height: 100vh;">
+    <div class="col-3" style="padding-right: .0em">
+        <div class="list-group list-group-light" id="list-tab" role="tablist">
+            <br>
+            <a class="list-group-item list-group-item-action text-primary px-3 border-0" id="list-home-list"
+               data-mdb-toggle="list" th:href="@{/admin}" role="tab" aria-controls="list-home"
+               sec:authorize="hasRole('ROLE_ADMIN')">Admin</a>
+            <a class="list-group-item list-group-item-action active px-3 border-0" id="list-profile-list"
+               data-mdb-toggle="list" th:href="@{/user}" role="tab" aria-controls="list-home">User</a>
+        </div>
+    </div>
+    <div class="col-9 tab-content" id="nav-tabContent" style="background-color: whitesmoke; padding-left: 30px">
+        <div class="tab-pane fade show active" id="admin_page" role="tabpanel" aria-labelledby="list-home-list"
+             style="padding-right:25px"><br>
+            <h1 style="text-align: left">User information-page</h1>
+            <div class="tab-content" id="user_content" style="background-color: white">
+                <div class="tab-pane admin active border" id="get_users" style="border: 0.1px solid">
+                    <nav class="navbar p-2" style="background-color: rgba(0, 0, 0, 0.075)">
+                        <nav class="nav-item">
+                            <span class="nav-item" style="padding-left:10px">About user</span>
+                        </nav>
+                    </nav>
+                    <div class="container form-control-sm"
+                         style="padding-top: 20px; padding-left: 10px; padding-right: 10px">
+                        <table class="table table-striped border-top">
+                            <thead>
+                            <tr th:id="user_fields" style="border-color: lightgray; border-style: inherit">
+                                <th th:id="id" scope="col">ID</th>
+                                <th th:id="firstName" scope="col">First name</th>
+                                <th th:id="lastName" scope="col">Last name</th>
+                                <th th:id="age" scope="col">Age</th>
+                                <th th:id="email" scope="col">Email</th>
+<!--                                <th th:id="roleNames" scope="col">Role</th>-->
+                                <th th:id="roles" scope="col">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody id="mainTable"
+                                   style="border-color: transparent;border-top: transparent;border-style: solid;">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
 </body>
+<script>
+    loadTableData();
+
+    async function loadTableData() {
+        await fetch("http://localhost:8080/api/user", {})
+            .then(
+                response => {
+                    response.json().then(
+                        user => {
+                            let temp = "";
+
+                            temp += `<tr id="${user.id}">`;
+                            temp += `<td id="id_${user.id}">${user.id}</td>`
+                            temp += `<td id="name_${user.id}">${user.firstName}</td>`
+                            temp += `<td id="last_name_${user.id}">${user.lastName}</td>`
+                            temp += `<td id="age_${user.id}">${user.age}</td>`
+                            temp += `<td id="email_${user.id}">${user.email}</td>`
+                            temp += `<td id="roles_${user.id}">${user.roles}</td>`
+                            temp += "</tr>"
+
+                            $(`#mainTable`).append(temp)
+                        }
+                    )
+                });
+    }
+</script>
 </html>

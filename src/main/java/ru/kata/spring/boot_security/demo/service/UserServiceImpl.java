@@ -1,30 +1,21 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
@@ -38,43 +29,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserDto> fetchUsers(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable)
-                .map(mapper::convertToDto);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserDto findById(Long id) {
-        return mapper.convertToDto(userRepository.getById(id));
+    public List<UserDto> getAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(mapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public void saveUser(UserDto user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User toUser = mapper.convertToUser(user);
-        //TODO: to remove
-        toUser.setRoles(convertStringToSetRoles(user.getRoles()));
-
-        userRepository.save(toUser);
+    public UserDto saveUser(UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User user = mapper.convertToUser(userDto);
+        userRepository.save(user);
+        return mapper.convertToDto(user);
     }
 
     @Override
     @Transactional
-    public void updateUser(UserDto user) {
-        User userById = userRepository.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("user with id {%d} not found", user.getId())));
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("user with id {%d} not found", userDto.getId())));
 
-        if (!userById.getPassword().equals(user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (!user.getPassword().equals(userDto.getPassword()) && !userDto.getPassword().isEmpty()) {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
-        User toUser = mapper.convertToUser(user);
-        //TODO: to remove
-        toUser.setRoles(convertStringToSetRoles(user.getRoles()));
-
-        userRepository.save(toUser);
+        mapper.updateUserFromDto(userDto, user);
+        return mapper.convertToDto(userRepository.saveAndFlush(user));
     }
 
     @Override
@@ -82,12 +63,5 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         userRepository.findById(id)
                 .ifPresent(userRepository::delete);
-    }
-
-    //TODO: remove this костылище
-    private Set<Role> convertStringToSetRoles(String roles) {
-        return new HashSet<>(roleRepository.getAllByNames(
-                Arrays.stream(roles.split(","))
-                        .collect(Collectors.toSet())));
     }
 }

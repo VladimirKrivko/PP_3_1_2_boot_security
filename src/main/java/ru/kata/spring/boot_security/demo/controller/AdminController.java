@@ -2,74 +2,45 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-@Controller
+@RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     private final UserService userService;
 
     @GetMapping
-    public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
-                          @RequestParam(required = false, defaultValue = "5") Integer size,
-                          Model model) {
-        log.info("handling users request: {} {}", page, size);
-        model.addAttribute("user", userService.findUserByEmail(
-                SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName()));
-
-        Page<UserDto> usersPage = userService.fetchUsers(page - 1, size);
-        model.addAttribute("users_page", usersPage);
-
-        int totalPages = usersPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("page_numbers", pageNumbers);
-        }
-        return "admin";
+    public List<UserDto> getALL() {
+        return userService.getAll();
     }
 
-    @PostMapping
-    public String createUser(@ModelAttribute("user") @Valid UserDto user,
-                             BindingResult bindingResult) {
-        log.info("handling create user request: {}", user);
-        userService.saveUser(user);
-        return "redirect:/admin";
+    @PostMapping()
+    public UserDto createUser(@RequestBody UserDto user) {
+        log.info("create user {}", user);
+        return userService.saveUser(user);
     }
 
-    @PostMapping("/update")
-    public String updateUser(@ModelAttribute("user") @Valid UserDto user,
-                             BindingResult bindingResult) {
-        log.info("handling update user request: {}", user);
-        userService.updateUser(user);
-        return "redirect:/admin";
+    @PatchMapping("/user/{id}")
+    public UserDto update(@PathVariable Long id, @RequestBody UserDto user) {
+        log.info("update user {} with id {}", user, id);
+        return userService.updateUser(id, user);
     }
 
-    @PostMapping("/delete")
-    public String deleteUser(@ModelAttribute("user") UserDto user) {
-        log.info("handling delete user request: {}", user);
-        userService.deleteById(user.getId());
-        return "redirect:/admin";
+    @DeleteMapping("/user/{id}")
+    public void delete(@PathVariable Long id) {
+        userService.deleteById(id);
     }
 }
