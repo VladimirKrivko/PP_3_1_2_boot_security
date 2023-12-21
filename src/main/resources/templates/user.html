@@ -1,11 +1,101 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta id="root" name="viewport" content="width=device-width, initial-scale=1" about="@{/users.html}">
+    <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <title>User</title>
 </head>
 <body>
-<h1>User, welcome spring boot security page!</h1>
 
+<nav class="navbar p-3 bg-dark text-white">
+    <nav class="nav-item">
+        <b sec:authentication="name"></b>
+        <span> with roles:</span>
+        <span sec:authorize="hasRole('ROLE_ADMIN')"> ADMIN</span>
+        <span sec:authorize="hasRole('ROLE_USER')"> USER</span>
+    </nav>
+    <nav class="navbar-nav text-right">
+        <a th:href="@{/logout}" style="color: #6c757d; text-decoration: none">Logout</a>
+    </nav>
+</nav>
 
+<div class="row" style="--bs-gutter-x: .0rem; height: 100vh;">
+    <div class="col-3" style="padding-right: .0em">
+        <div class="list-group list-group-light" id="list-tab" role="tablist">
+            <br>
+            <a class="list-group-item list-group-item-action text-primary px-3 border-0" id="list-home-list"
+               data-mdb-toggle="list" th:href="@{/admin}" role="tab" aria-controls="list-home"
+               sec:authorize="hasRole('ROLE_ADMIN')">Admin</a>
+            <a class="list-group-item list-group-item-action active px-3 border-0" id="list-profile-list"
+               data-mdb-toggle="list" th:href="@{/user}" role="tab" aria-controls="list-home">User</a>
+        </div>
+    </div>
+    <div class="col-9 tab-content" id="nav-tabContent" style="background-color: whitesmoke; padding-left: 30px">
+        <div class="tab-pane fade show active" id="admin_page" role="tabpanel" aria-labelledby="list-home-list"
+             style="padding-right:25px"><br>
+            <h1 style="text-align: left">User information-page</h1>
+            <div class="tab-content" id="user_content" style="background-color: white">
+                <div class="tab-pane admin active border" id="get_users" style="border: 0.1px solid">
+                    <nav class="navbar p-2" style="background-color: rgba(0, 0, 0, 0.075)">
+                        <nav class="nav-item">
+                            <span class="nav-item" style="padding-left:10px">About user</span>
+                        </nav>
+                    </nav>
+                    <div class="container form-control-sm"
+                         style="padding-top: 20px; padding-left: 10px; padding-right: 10px">
+                        <table class="table table-striped border-top">
+                            <thead>
+                            <tr th:id="user_fields" style="border-color: lightgray; border-style: inherit">
+                                <th th:id="id" scope="col">ID</th>
+                                <th th:id="firstName" scope="col">First name</th>
+                                <th th:id="lastName" scope="col">Last name</th>
+                                <th th:id="age" scope="col">Age</th>
+                                <th th:id="email" scope="col">Email</th>
+<!--                                <th th:id="roleNames" scope="col">Role</th>-->
+                                <th th:id="roles" scope="col">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody id="mainTable"
+                                   style="border-color: transparent;border-top: transparent;border-style: solid;">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+<script>
+    loadTableData();
+
+    async function loadTableData() {
+        await fetch("http://localhost:8080/api/user", {})
+            .then(
+                response => {
+                    response.json().then(
+                        user => {
+                            let temp = "";
+
+                            temp += `<tr id="${user.id}">`;
+                            temp += `<td id="id_${user.id}">${user.id}</td>`
+                            temp += `<td id="name_${user.id}">${user.firstName}</td>`
+                            temp += `<td id="last_name_${user.id}">${user.lastName}</td>`
+                            temp += `<td id="age_${user.id}">${user.age}</td>`
+                            temp += `<td id="email_${user.id}">${user.email}</td>`
+                            temp += `<td id="roles_${user.id}">${user.roles}</td>`
+                            temp += "</tr>"
+
+                            $(`#mainTable`).append(temp)
+                        }
+                    )
+                });
+    }
+</script>
 </html>
